@@ -1,2 +1,2 @@
 #!/bin/env sh
-echo faceloader.c
+echo facegenerator.c

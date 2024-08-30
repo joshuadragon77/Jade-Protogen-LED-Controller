@@ -9,8 +9,9 @@
 
 #include <GraphicsMagick/magick/api.h>
 
+#include "facegenerator.h"
+
 #include "led-matrix-c.h"
-#include "faceloader.h"
 
 struct RGBLedMatrix * ledMatricies;
 struct LedCanvas * ledCanvas;
@@ -65,8 +66,8 @@ void obtainImageBuffer(PixelPacket * pixels, unsigned int imageWidth, unsigned i
             uint8_t blue = pixel->blue;
             uint8_t alpha = 255 - pixel->opacity;
 
-            buffer[index + 0] = 0;
-            buffer[index + 1] = blue * 170 / 255;
+            buffer[index + 0] = red;
+            buffer[index + 1] = green;
             buffer[index + 2] = blue;
 
         }
@@ -101,19 +102,22 @@ void drawFace(){
     float xOffset = cosf(animationFactor * 2 * M_PI);
     float yOffset = sinf(animationFactor * 2 * M_PI);
 
+    unsigned long eyeFrame;
+    unsigned long eyeMaximumFrame;
+    obtainFrameIndex(3000, &eyeFrame, &eyeMaximumFrame);
 
-    {
-        
-        uint8_t imageWidth = eyeImage->columns;
-        uint8_t imageHeight = eyeImage->rows;
 
-        // DrawComposite(context, CompositeImage, xOffset, yOffset, imageWidth, imageHeight, eyeImage);
+    float eyeAnimationFactor = (float)eyeFrame / eyeMaximumFrame;
+    float eyeAnimationFactor2 = sinf(eyeAnimationFactor * M_PI / 0.15f);
 
-        CompositeImage(offscreenImage, OverCompositeOp, eyeImage, 425 + 5 * xOffset, 5 + 5 * yOffset);
-        CompositeImage(offscreenImage, OverCompositeOp, mouthImage, 25 + 15 * xOffset, 196 + 15 * yOffset);
-        CompositeImage(offscreenImage, OverCompositeOp, noseImage, 27 + 25 * xOffset, 25 + 25 * yOffset);
-
+    if (eyeAnimationFactor >= 0.15f){
+        eyeAnimationFactor2 = 0.0f;
     }
+
+    unsigned int currentSequenceIndex = eyeSequence.numberOfImages * eyeAnimationFactor2;
+
+    CompositeImage(offscreenImage, OverCompositeOp, eyeSequence.images[currentSequenceIndex], 463 + 15 * xOffset, 15 * yOffset);
+
     // DrawContext context = DrawAllocateContext(0, offscreenImage);
 
     // DrawRender(context);
@@ -194,14 +198,15 @@ int initializeRender(){
     PixelPacket backgroundColor = {0, 170, 255, 1};
     char size[] = "720x360";
 
-    imageInfo.background_color = backgroundColor;
+    // imageInfo.background_color = backgroundColor;
     imageInfo.size = size;
 
     offscreenImage = AllocateImage(&imageInfo);
     SyncImage(offscreenImage);
     pixelsOffscreenImage = GetImagePixels(offscreenImage, 0, 0, offscreenImage->columns, offscreenImage->rows);
 
-    load();
+    initFaceGenerator();
+    
     printf("Loaded Render Engine\n");
 
     return 0;
@@ -211,6 +216,7 @@ int main(int argc, char **argv) {
     if (initializeMatrix(argc, argv) || initializeRender()){
         return 1;
     }
+
 
     fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL) | O_NONBLOCK);
 

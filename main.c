@@ -11,7 +11,6 @@
 #include <GraphicsMagick/magick/api.h>
 
 #include "led-matrix-c.h"
-#include "faceloader.h"
 
 struct RGBLedMatrix * ledMatricies;
 struct LedCanvas * ledCanvas;
@@ -89,36 +88,7 @@ void drawFace(){
 
     float animationFactor = (float)frame / maximumFrame;
     float xOffset = cosf(animationFactor * 2 * M_PI);
-    float yOffset = sinf(animationFactor * 2 * M_PI);
-
-    {
-        uint8_t imageWidth = 24;
-        uint8_t imageHeight = 14;
-        uint8_t buffer[imageWidth * imageHeight * 3];
-
-        obtainImageBuffer(eyeImage, buffer, imageWidth, imageHeight);
-
-        set_image(offscreenCanvas, 40 + (int)(2 * xOffset), (int)(2 * yOffset), buffer, sizeof(buffer), imageWidth, imageHeight, 0);
-    }
-    {
-        uint8_t imageWidth = 60;
-        uint8_t imageHeight = 16;
-        uint8_t buffer[imageWidth * imageHeight * 3];
-
-        obtainImageBuffer(mouthImage, buffer, imageWidth, imageHeight);
-
-        set_image(offscreenCanvas, (int)(10 * xOffset), 16 + (int)(10 * yOffset), buffer, sizeof(buffer), imageWidth, imageHeight, 0);
-    }
-    {
-        uint8_t imageWidth = 10;
-        uint8_t imageHeight = 10;
-        uint8_t buffer[imageWidth * imageHeight * 3];
-
-        obtainImageBuffer(noseImage, buffer, imageWidth, imageHeight);
-
-        set_image(offscreenCanvas, (int)(15 * xOffset), 7 + (int)(15 * yOffset), buffer, sizeof(buffer), imageWidth, imageHeight, 0);
-    }
-}
+    float yOffset = sinf(animationFactor * 2 * M_PI);}
 
 void render(){
     offscreenCanvas = led_matrix_swap_on_vsync(ledMatricies, offscreenCanvas);
