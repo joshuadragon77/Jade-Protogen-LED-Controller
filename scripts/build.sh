@@ -7,9 +7,10 @@ FILE=$2
 
 if [ -z $FILE ] 
 then
-    FILE="./main.c";
+    FILE="./jadeos.c";
 fi
 
-g++ $ARGUMENTS $FILE $INTERNALLINKFILES `GraphicsMagick-config --cppflags --ldflags --libs` -I../rpi-rgb-led-matrix/include -I/usr/include/libxml2/ -L../rpi-rgb-led-matrix/lib -lrgbmatrix -lrt -lm -lpthread -lxml2
+GRAPHICS_MAGICK_ARGS=`GraphicsMagick-config --cppflags --ldflags --libs`
+g++ $ARGUMENTS $FILE $INTERNALLINKFILES $GRAPHICS_MAGICK_ARGS -I../rpi-rgb-led-matrix/include -I/usr/include/libxml2/ -L../rpi-rgb-led-matrix/lib -lws2811 -lpigpio -lrgbmatrix -lrt -lm -lpthread -lxml2
 
-echo "Sucess";
+return $?

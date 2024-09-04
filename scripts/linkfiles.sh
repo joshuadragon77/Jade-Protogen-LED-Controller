@@ -1,2 +1,2 @@
 #!/bin/env sh
-echo facegenerator.c
+echo prerender.c animator.c ledmatrix.c consolescript.c wsled.c color.c

@@ -1,0 +1,93 @@
+#!/bin/env nodejs
+
+const fs = require("fs");
+
+let files = fs.readdirSync("./faces", "utf-8");
+
+let contents = `#define USE_DEFAULT_POLYGONS\n`;
+for (let file of files){
+    let assetName = file.replace(/\.svg/, "");
+
+    let svgFile = fs.readFileSync(`./faces/${file}`, "utf-8");
+    
+    let matches = svgFile.matchAll(/<g id="(?<id>[^"]+)".*>\n<path d="(?<path>.+)" fill=.+\n<\/g>/g);
+    
+    let subContent = ``;
+    while (true){
+        let match = matches.next();
+        
+        if (match.done){
+            break;
+        }
+        
+        let label = match.value.groups.id;
+        let path = match.value.groups.path;
+
+        subContent += `Point ${assetName}_${label}Points[] = {\n`;
+        
+        let pathMatches = path.matchAll(/(?<Command>[MLZ])(?<Parameter1>\d+\.\d+)? ?(?<Parameter2>\d+\.\d+)?/g);
+
+        let points = [];
+        
+        while (true){
+            let match = pathMatches.next();
+            if (match.done){
+                break;
+            }
+
+            let command = match.value.groups.Command;
+            let parameter1 = match.value.groups.Parameter1;
+            let parameter2 = match.value.groups.Parameter2;
+            
+            switch(command){
+                case "L":{
+                    points.push({x: Math.round(Number(parameter1)), y: Math.round(Number(parameter2))});
+                    break;
+                }
+                case "M":{
+                }
+                case "Z":{
+                    break;
+                }
+            }
+        }
+        
+        let minimumXBounds = 1000000;
+        let minimumYBounds = 1000000;
+        let maximumXBounds = 0;
+        let maximumYBounds = 0;
+
+        for (let point of points){
+            minimumXBounds = Math.min(minimumXBounds, point.x);
+            maximumXBounds = Math.max(maximumXBounds, point.x);
+
+            minimumYBounds = Math.min(minimumYBounds, point.y);
+            maximumYBounds = Math.max(maximumYBounds, point.y);
+        }
+
+        let width = maximumXBounds - minimumXBounds;
+        let height = maximumYBounds - minimumYBounds;
+
+        for (let point of points){
+            subContent += `    {${point.x - minimumXBounds}, ${point.y - minimumYBounds}},\n`;
+        }
+
+        subContent += `};\n`;
+
+        subContent += `Polygon ${assetName}_${label}Polygon = {\n`;
+        subContent += `    ${assetName}_${label}Points,\n`;
+        subContent += `    ${points.length},\n`;
+        subContent += `    ${width},\n`;
+        subContent += `    ${height},\n`;
+        subContent += `    "${assetName} - ${label}",\n`;
+        subContent += `};\n\n`;
+    }
+
+    contents += subContent;
+}
+const outputHeader = fs.openSync("./assets.h", "w");
+fs.writeSync(outputHeader, contents);
+fs.closeSync(outputHeader);
+
+
+
