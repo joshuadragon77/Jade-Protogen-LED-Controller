@@ -1,8 +1,10 @@
-#include "animator.h"
-#include "consolescript.h"
+#include "macros.h"
 
-struct timeval time;
-unsigned long timeOffset = 0;
+#include "animator.h"
+
+struct timeval timeStart;
+
+struct timeval timeCache;
 
 float fclampf(float number, float min, float max){
     return fmaxf(fminf(number, max), min);
@@ -17,70 +19,134 @@ int clamp(int number, int min, int max){
 }
 
 struct timeval * obtainCurrentTime(){
-    gettimeofday(&time, 0);
-    return &time;
+    gettimeofday(&timeCache, 0);
+
+    return &timeCache;
 }
 
-void obtainTimeFactor(const unsigned long * frame, const unsigned long * maximumFrame, float * timeFactor){
-    *timeFactor = ((double)(*frame) / *maximumFrame);
-}
-
-void obtainFrameIndex(const unsigned short * frameRate, const unsigned int * durationMS, const unsigned long * timeOffset, unsigned long * frame, unsigned long * maximumFrame){
-
+void obtainMicroseconds(unsigned long * time){
     struct timeval * currentTime = obtainCurrentTime();
+    struct timeval * timeOffset = &timeStart;
 
-    unsigned long observedTime = (currentTime->tv_sec - *timeOffset) * 1000000 + currentTime->tv_usec;
-
-    *frame = observedTime 
-        % (*durationMS * 1000) 
-        * *frameRate / 1000;
-
-    *maximumFrame = *durationMS * 1000 * *frameRate / 1000;
+    *time = currentTime->tv_sec * 1000000 + currentTime->tv_usec;
 }
 
-JadeTimeTrack * initializeJadeTimeTrack(JadeTimeTrack * jadeTimeTrack){
-    jadeTimeTrack->animationDurationMS = 1000;
-    jadeTimeTrack->cooldownDurationMS = 0;
-    jadeTimeTrack->frameRate = 1;
-    jadeTimeTrack->cooldownMode = RestOnStart;
-    jadeTimeTrack->timeOffset = obtainCurrentTime()->tv_sec;
-    return jadeTimeTrack;
+JadeTimeTrack * initializeTimeTrack(JadeTimeTrack * timeTrack){
+    timeTrack->animationDurationUS = 1000000;
+    timeTrack->cooldownMode = RestOnStart;
+    timeTrack->loopMode = NoLoop;
+    timeTrack->playMode = Stopped;
+    
+    return timeTrack;
 }
 
-void obtainTimeTrackFactor(const JadeTimeTrack * jadeTimeTrack, float * timeFactor){
-    unsigned long frame = 0;
-    unsigned long maximumFrame = 0;
+void playTimeTrack(JadeTimeTrack * timeTrack){
+    obtainMicroseconds(&timeTrack->timeState.timeOffset);
+    timeTrack->playMode = Played;
+}
 
-    const unsigned int totalDuration = jadeTimeTrack->animationDurationMS + jadeTimeTrack->cooldownDurationMS;
+void pauseTimeTrack(JadeTimeTrack * timeTrack){
+    unsigned long currentTime;
+    obtainMicroseconds(&currentTime);
+    timeTrack->playMode = Paused;
+    timeTrack->timeState.pauseGap = currentTime - timeTrack->timeState.timeOffset;
+}
 
-    obtainFrameIndex(&jadeTimeTrack->frameRate, &totalDuration, &jadeTimeTrack->timeOffset, &frame, &maximumFrame);
+void resumeTimeTrack(JadeTimeTrack * timeTrack){
+    unsigned long currentTime;
+    obtainMicroseconds(&currentTime);
+    timeTrack->playMode = Played;
+    timeTrack->timeState.timeOffset = currentTime - timeTrack->timeState.pauseGap;
+}
 
-    obtainTimeFactor(&frame, &maximumFrame, timeFactor);
-    *timeFactor *= (double)totalDuration / jadeTimeTrack->animationDurationMS;
+void stopTimeTrack(JadeTimeTrack * timeTrack){
+    timeTrack->playMode = Stopped;
+}
 
-    if (*timeFactor >= 1){
-        switch(jadeTimeTrack->cooldownMode){
-            case RestOnEnd:{
-                *timeFactor = 1;
+void obtainTimeTrackFactor(JadeTimeTrack * timeTrack, double * timeFactor){
+    unsigned long currentTime;
+    obtainMicroseconds(&currentTime);
+
+    unsigned long deltaTime = currentTime - timeTrack->timeState.timeOffset;
+    switch(timeTrack->playMode){
+        case Paused:{};
+        case Played:{
+
+
+            if (deltaTime >= timeTrack->animationDurationUS){
+                switch(timeTrack->loopMode){
+                    case Loop:{
+                        deltaTime -= timeTrack->animationDurationUS;
+                        timeTrack->timeState.timeOffset = currentTime - deltaTime;
+
+                        *timeFactor = fclamp((double)deltaTime / timeTrack->animationDurationUS, 0, 1);
+                        return;
+                    }
+                    case LoopDelay:{
+                        deltaTime -= timeTrack->animationDurationUS;
+                        timeTrack->timeState.timeOffset = currentTime - deltaTime;
+
+                        *timeFactor = fclamp((double)deltaTime / timeTrack->animationDurationUS, 0, 1);
+                        timeTrack->playMode = Cooldown;
+                        break;
+                    }
+                    case NoLoop:{
+                        deltaTime = 0;
+                        timeTrack->timeState.timeOffset = currentTime;
+                        timeTrack->playMode = Stopped;
+                        break;
+                    }
+                }
+            }else{
+                *timeFactor = fclamp((double)deltaTime / timeTrack->animationDurationUS, 0, 1);
                 break;
             }
-            case RestOnStart:{
-                *timeFactor = 0;
-                break;
+        };
+        case Stopped:{
+            switch(timeTrack->cooldownMode){
+                case RestOnEnd:{
+                    *timeFactor = 1;
+                    return;
+                }
+                case RestOnStart:{
+                    *timeFactor = 0;
+                    return;
+                }
             }
+            break;
+        }
+        case Cooldown:{
+
+            if (timeTrack->loopMode == NoLoop){
+                deltaTime = 0;
+                timeTrack->timeState.timeOffset = currentTime;
+                timeTrack->playMode = Stopped;
+            }
+
+            if (deltaTime >= timeTrack->cooldownDurationUS){
+                deltaTime -= timeTrack->cooldownDurationUS;
+
+                timeTrack->timeState.timeOffset = currentTime - deltaTime;
+                timeTrack->playMode = Played;
+            }
+            switch(timeTrack->cooldownMode){
+                case RestOnEnd:{
+                    *timeFactor = 1;
+                    return;
+                }
+                case RestOnStart:{
+                    *timeFactor = 0;
+                    return;
+                }
+            }
+            break;
         }
     }
 }
 
-void obtainAnimationTrackFactor(const JadeAnimationTrack jadeAnimationTrack, const float * timeFactor, float * animationFactor){
-    jadeAnimationTrack(timeFactor, animationFactor);
-}
-
 int initAnimator(){
-    systemNormaLog("Initializing Animator...");
-    struct timeval * currentTime = obtainCurrentTime();
-    timeOffset = currentTime->tv_sec;
 
-    systemNormaLog("Initialized Animator");
+    gettimeofday(&timeStart, 0);
+
     return 0;
 }

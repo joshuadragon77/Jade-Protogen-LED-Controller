@@ -22,5 +22,7 @@ extern Image * defaultEyeImage;
 extern ImageSequence eyeSequence;
 extern Image * defaultMawImage;
 extern Image * defaultNoseImage;
+extern Image * defaultEyeBoopImage;
+extern ImageSequence boopEyeSequence;
 
 int initPreRender();

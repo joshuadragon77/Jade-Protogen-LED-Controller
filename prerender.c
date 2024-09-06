@@ -84,10 +84,13 @@ Polygon defaultNosePolygon = {
     #define defaultEyePolygon JadesFace_eyePolygon
 
     #define defaultEyeClosePolygon JadesFaceBlink_eyePolygon
+    #define defaultEyeBoopPolygon JadesFaceBoop_eyePolygon
 #endif
 
 Image * defaultEyeImage;
 ImageSequence eyeSequence;
+Image * defaultEyeBoopImage;
+ImageSequence boopEyeSequence;
 Image * defaultMawImage;
 Image * defaultNoseImage;
 
@@ -219,8 +222,10 @@ void destroyImageSequence(ImageSequence sequence){
 int initPreRender(){
     systemNormaLog("Initializing Pre Render...");
     defaultEyeImage = generateAnimationLinearInImage(&defaultEyePolygon, &defaultEyeClosePolygon, 250);
+    defaultEyeBoopImage = generateAnimationLinearInImage(&defaultEyePolygon, &defaultEyeBoopPolygon, 250);
 
     eyeSequence = generateImageSequence(defaultEyeImage, 250);
+    boopEyeSequence = generateImageSequence(defaultEyeBoopImage, 250);
 
     defaultMawImage = generateStaticImage(&defaultMawPolygon);
     defaultNoseImage = generateStaticImage(&defaultNosePolygon);

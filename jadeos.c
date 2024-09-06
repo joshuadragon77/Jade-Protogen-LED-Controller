@@ -14,34 +14,58 @@
 
 JadeTimeTrack faceMovementTimeTrack;
 JadeTimeTrack eyeBlinkTimeTrack;
+JadeTimeTrack boopTimeTrack;
+
+unsigned int boop = 0;
 
 void renderToBuffer(Image * offscreenImage){
+
+    if (boop){
+        eyeBlinkTimeTrack.loopMode = NoLoop;
+
+        if (eyeBlinkTimeTrack.playMode == Stopped){
+            playTimeTrack(&boopTimeTrack);
+            boop = 0;
+        }
+    }
+    if (eyeBlinkTimeTrack.playMode == Stopped && boopTimeTrack.playMode == Stopped){
+        eyeBlinkTimeTrack.loopMode = LoopDelay;
+        playTimeTrack(&eyeBlinkTimeTrack);
+    }
 
 
     PixelPacket backgroundColor = {0, 0, 0};
 
-    float timeFactor = 0;
+    double timeFactor = 0;
     obtainTimeTrackFactor(&faceMovementTimeTrack, &timeFactor);
 
     float xOffset = cosf(timeFactor * 2 * M_PI);
     float yOffset = sinf(timeFactor * 2 * M_PI);
 
     obtainTimeTrackFactor(&eyeBlinkTimeTrack, &timeFactor);
-    float eyeAnimationFactor2 = sinf(timeFactor * M_PI / 0.2f);
+    float eyeAnimationFactor = sinf(timeFactor * M_PI);
 
-    if (timeFactor >= 0.2f){
-        eyeAnimationFactor2 = 0.0f;
+    obtainTimeTrackFactor(&boopTimeTrack, &timeFactor);
+    float boopAnimationFactor = pow(sinf(timeFactor * M_PI), 0.5);
+
+    if (boopTimeTrack.playMode == Stopped){
+        unsigned int currentSequenceIndex = clamp(eyeSequence.numberOfImages * eyeAnimationFactor, 0, eyeSequence.numberOfImages - 1);
+
+        CompositeImage(offscreenImage, OverCompositeOp, eyeSequence.images[currentSequenceIndex], 425 + 5 * xOffset, 5 + 5 * yOffset + eyeAnimationFactor * 90);
+    }else{
+        unsigned int currentSequenceIndex = clamp(boopEyeSequence.numberOfImages * boopAnimationFactor, 0, boopEyeSequence.numberOfImages - 1);
+
+        CompositeImage(offscreenImage, OverCompositeOp, boopEyeSequence.images[currentSequenceIndex], 425 + 5 * xOffset, 5 + 5 * yOffset + eyeAnimationFactor * 90);
     }
 
-    unsigned int currentSequenceIndex = clamp(eyeSequence.numberOfImages * eyeAnimationFactor2, 0, eyeSequence.numberOfImages - 1);
-
-    CompositeImage(offscreenImage, OverCompositeOp, eyeSequence.images[currentSequenceIndex], 425 + 5 * xOffset, 5 + 5 * yOffset + eyeAnimationFactor2 * 90);
     CompositeImage(offscreenImage, OverCompositeOp, defaultMawImage, 25 + 15 * xOffset, 196 + 15 * yOffset);
     CompositeImage(offscreenImage, OverCompositeOp, defaultNoseImage, 28 + 5 * xOffset, 25 + 5 * yOffset);
 }
 
 
 int main(int argc, char **argv) {
+
+    // initAnimator();
 
     initWS2812BDriver();
 
@@ -53,14 +77,23 @@ int main(int argc, char **argv) {
     }
 
 
-    initializeJadeTimeTrack(&faceMovementTimeTrack);
-    initializeJadeTimeTrack(&eyeBlinkTimeTrack);
-    faceMovementTimeTrack.animationDurationMS = 4000;
-    eyeBlinkTimeTrack.animationDurationMS = 3000;
+    initializeTimeTrack(&faceMovementTimeTrack);
+    initializeTimeTrack(&eyeBlinkTimeTrack);
+    initializeTimeTrack(&boopTimeTrack);
+    faceMovementTimeTrack.animationDurationUS = SECONDS_TO_US(4);
+    faceMovementTimeTrack.loopMode = Loop;
+
+    eyeBlinkTimeTrack.loopMode = LoopDelay;
+    eyeBlinkTimeTrack.animationDurationUS = MILLISECONDS_TO_US(500);
+    eyeBlinkTimeTrack.cooldownDurationUS = SECONDS_TO_US(1);
+
+    boopTimeTrack.animationDurationUS = SECONDS_TO_US(4);
+
+    playTimeTrack(&faceMovementTimeTrack);
+    playTimeTrack(&eyeBlinkTimeTrack);
 
 
     fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL) | O_NONBLOCK);
-
 
     while (true){
         
@@ -74,13 +107,16 @@ int main(int argc, char **argv) {
             clearMatrix();
             return 0;
         }
-
+        if (strcmp("boop\n", command) == 0){
+            printf("Boop.\n");
+            boop = 1;
+        }
         updateColorIndex();
         requestRender();
-        usleep(5000);
+        usleep(20000);
         renderLEDStrips();
         // clearLEDStrips();
-        usleep(5000);
+        usleep(20000);
 
     }
 

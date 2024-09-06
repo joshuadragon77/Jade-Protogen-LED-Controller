@@ -49,22 +49,24 @@ void obtainRainbow(const float * colorFactor, JColor * color){
 }
 
 void updateColorIndex(){
-    float animationFactor;
+    double animationFactor;
     JColor from = {0, 170, 255};
-    JColor to = {10, 10, 29};
+    JColor to = {0, 255, 255};
     obtainTimeTrackFactor(&timeTrack, &animationFactor);
     for (int i = 0;i<255;i++){
         float remainder = 1.0f;
         float specificAnimationFactor = sinf(M_PI * fmodf((float)i / 255 + animationFactor, remainder));
 
-        obtainRainbow(&specificAnimationFactor, &colorArray[i]);
-        // lerpColor(&from, &to, &colorArray[i], &specificAnimationFactor);
+        // obtainRainbow(&specificAnimationFactor, &colorArray[i]);
+        lerpColor(&from, &to, &colorArray[i], &specificAnimationFactor);
     }
 }
 
 int initColor(){
-    initializeJadeTimeTrack(&timeTrack);
-    timeTrack.animationDurationMS = 4000;
+    initializeTimeTrack(&timeTrack);
+    timeTrack.animationDurationUS = SECONDS_TO_US(2);
+    timeTrack.loopMode = Loop;
+    playTimeTrack(&timeTrack);
 
     for (int i = 0;i<255;i++){
         colorArray[i].red = 0;

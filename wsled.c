@@ -13,16 +13,16 @@ ws2811_t ledStrip = {
         [0] = {
             .gpionum = 10,
             .invert = 0,
-            .count = 60,
+            .count = 20,
             .strip_type = WS2811_STRIP_GRB,
-            .brightness = 5
+            .brightness = 100
         }
     }
 };
 
 void renderLEDStrips(){
-    for (int i = 0;i<60;i++){
-        float colorFactor = (float)i / 60;
+    for (int i = 0;i<20;i++){
+        float colorFactor = (float)i / 20;
 
         const JColor * color = determineColorAtIndex(&colorFactor);
 
@@ -35,7 +35,7 @@ void renderLEDStrips(){
 }
 
 void clearLEDStrips(){
-    for (int i = 0;i<60;i++){
+    for (int i = 0;i<20;i++){
         ledStrip.channel[0].leds[i] = 0;
     }
 
