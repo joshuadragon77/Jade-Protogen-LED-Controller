@@ -18,6 +18,16 @@ typedef struct _ImageSequence{
     unsigned int numberOfImages;
 } ImageSequence;
 
+typedef struct _Face{
+    ImageSequence * eyeAnimation;
+    ImageSequence * eyeBlinkAnimation;
+
+    ImageSequence * noseAnimation;
+
+    ImageSequence * mouthAnimation;
+    ImageSequence * mouthOpenAnimation;
+} Face;
+
 extern Image * defaultEyeImage;
 extern ImageSequence eyeSequence;
 extern Image * defaultMawImage;

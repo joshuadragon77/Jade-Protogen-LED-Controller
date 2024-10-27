@@ -1,8 +1,7 @@
-#include "ledmatrix.h"
-#include "consolescript.h"
-#include "color.h"
-
 #include <math.h>
+
+#include "color.h"
+#include "ledmatrix.h"
 
 
 struct RGBLedMatrix * ledMatricies;
@@ -63,13 +62,13 @@ void renderToMatrix(){
 
     obtainImageBuffer(pixelsOffscreenImage, offscreenImage->columns, offscreenImage->rows, buffer, matrixWidth, matrixHeight, HORIZONTAL_FLIP);
 
-    set_image(ledCanvas, 0, 0, buffer, sizeof(buffer), matrixWidth, matrixHeight, 0);
+    set_image(offscreenCanvas, 0, 0, buffer, sizeof(buffer), matrixWidth, matrixHeight, 0);
 
     obtainImageBuffer(pixelsOffscreenImage, offscreenImage->columns, offscreenImage->rows, buffer, matrixWidth, matrixHeight, NO_FLIP );
 
-    set_image(ledCanvas, 64, 0, buffer, sizeof(buffer), matrixWidth, matrixHeight, 0);
+    set_image(offscreenCanvas, 64, 0, buffer, sizeof(buffer), matrixWidth, matrixHeight, 0);
 
-    // offscreenCanvas = led_matrix_swap_on_vsync(ledMatricies, offscreenCanvas);
+    offscreenCanvas = led_matrix_swap_on_vsync(ledMatricies, offscreenCanvas);
 
     PixelPacket resetColor = {0, 0, 0};
     SetImageColor(offscreenImage, &resetColor);
@@ -86,7 +85,6 @@ void requestRender(){
 
 
 int initLedMatrix(int argc, char ** argv){
-    systemNormaLog("Initializing LED Matrix...");
 
     struct RGBLedMatrixOptions options;
     memset(&options, 0, sizeof(options));
@@ -105,7 +103,7 @@ int initLedMatrix(int argc, char ** argv){
     ledMatricies = led_matrix_create_from_options(&options, &argc, &argv);
 
     if (ledMatricies == 0) {
-        systemErrorLog("Failed to initialize LED Matricies...\n");
+        printf("Failed to initialize LED Matricies...\n");
         led_matrix_print_flags(stderr);
         return 1;
     }
@@ -129,8 +127,6 @@ int initLedMatrix(int argc, char ** argv){
 
     offscreenImage = AllocateImage(&imageInfo);
     pixelsOffscreenImage = GetImagePixels(offscreenImage, 0, 0, offscreenImage->columns, offscreenImage->rows);
-
-    systemNormaLog("Initialized LED Matrix");
 
     return 0;
 }

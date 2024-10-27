@@ -1,6 +1,7 @@
-#include "led-matrix-c.h"
 #include <GraphicsMagick/magick/api.h>
 #include <string.h>
+
+#include "led-matrix-c.h"
 
 #define NO_FLIP 0
 #define VERTICAL_FLIP 1

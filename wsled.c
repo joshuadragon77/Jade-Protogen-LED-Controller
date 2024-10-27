@@ -1,7 +1,7 @@
 #include "macros.h"
 
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "color.h"
 #include "wsled.h"
@@ -13,7 +13,7 @@ ws2811_t ledStrip = {
         [0] = {
             .gpionum = 10,
             .invert = 0,
-            .count = 20,
+            .count = 48,
             .strip_type = WS2811_STRIP_GRB,
             .brightness = 100
         }
@@ -21,8 +21,8 @@ ws2811_t ledStrip = {
 };
 
 void renderLEDStrips(){
-    for (int i = 0;i<20;i++){
-        float colorFactor = (float)i / 20;
+    for (int i = 0;i<48;i++){
+        float colorFactor = (float)i / 48;
 
         const JColor * color = determineColorAtIndex(&colorFactor);
 
@@ -35,7 +35,7 @@ void renderLEDStrips(){
 }
 
 void clearLEDStrips(){
-    for (int i = 0;i<20;i++){
+    for (int i = 0;i<48;i++){
         ledStrip.channel[0].leds[i] = 0;
     }
 

@@ -3,8 +3,8 @@
 #include "animator.h"
 
 struct timeval timeStart;
-
 struct timeval timeCache;
+unsigned long stopwatchStart;
 
 float fclampf(float number, float min, float max){
     return fmaxf(fminf(number, max), min);
@@ -61,6 +61,17 @@ void resumeTimeTrack(JadeTimeTrack * timeTrack){
 
 void stopTimeTrack(JadeTimeTrack * timeTrack){
     timeTrack->playMode = Stopped;
+}
+
+void startStopwatch(){
+    obtainMicroseconds(&stopwatchStart);
+}
+
+unsigned long printStopwatchUS(){
+    unsigned long currentTime;
+    obtainMicroseconds(&currentTime);
+    
+    return currentTime - stopwatchStart;
 }
 
 void obtainTimeTrackFactor(JadeTimeTrack * timeTrack, double * timeFactor){

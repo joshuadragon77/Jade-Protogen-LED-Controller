@@ -1,4 +1,5 @@
 #!/bin/env nodejs
+console.log("Generating assets.h...");
 
 const fs = require("fs");
 
@@ -7,11 +8,14 @@ let files = fs.readdirSync("./faces", "utf-8");
 let contents = `#define USE_DEFAULT_POLYGONS\n`;
 for (let file of files){
     let assetName = file.replace(/\.svg/, "");
-
+    
     let svgFile = fs.readFileSync(`./faces/${file}`, "utf-8");
+
+    console.log(`Reading ${assetName}...`);
     
     let matches = svgFile.matchAll(/<g id="(?<id>[^"]+)".*>\n<path d="(?<path>.+)" fill=.+\n<\/g>/g);
     
+
     let subContent = ``;
     while (true){
         let match = matches.next();
@@ -22,6 +26,8 @@ for (let file of files){
         
         let label = match.value.groups.id;
         let path = match.value.groups.path;
+
+        console.log(`Reading ${assetName}-${label}...`);
 
         subContent += `Point ${assetName}_${label}Points[] = {\n`;
         

@@ -1,17 +1,14 @@
 #include "macros.h"
 
-#include "color.h"
-
 #include <stdio.h>
 
 #include "animator.h"
+#include "color.h"
 
 JColor colorArray[255];
 JadeTimeTrack timeTrack;
 
 const JColor * determineColorAtIndex(const float * colorFactor){
-
-    // printf("%u\n", index);
 
     unsigned char selectedIndex = 255 * *colorFactor;
 
@@ -50,14 +47,14 @@ void obtainRainbow(const float * colorFactor, JColor * color){
 
 void updateColorIndex(){
     double animationFactor;
-    JColor from = {0, 170, 255};
+    JColor from = {0, 170 , 255};
     JColor to = {0, 255, 255};
     obtainTimeTrackFactor(&timeTrack, &animationFactor);
     for (int i = 0;i<255;i++){
         float remainder = 1.0f;
         float specificAnimationFactor = sinf(M_PI * fmodf((float)i / 255 + animationFactor, remainder));
 
-        // obtainRainbow(&specificAnimationFactor, &colorArray[i]);
+        //obtainRainbow(&specificAnimationFactor, &colorArray[i]);
         lerpColor(&from, &to, &colorArray[i], &specificAnimationFactor);
     }
 }

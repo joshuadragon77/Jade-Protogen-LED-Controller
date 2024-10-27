@@ -1,7 +1,7 @@
-#include <time.h>
-#include <sys/time.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <sys/time.h>
+#include <time.h>
 
 #define SECONDS_TO_US(X) X * 1000000
 #define MILLISECONDS_TO_US(X) X * 1000
@@ -47,4 +47,6 @@ void pauseTimeTrack(JadeTimeTrack * timeTrack);
 void resumeTimeTrack(JadeTimeTrack * timeTrack);
 void stopTimeTrack(JadeTimeTrack * timeTrack);
 void obtainTimeTrackFactor(JadeTimeTrack * timeTrack, double * timeFactor);
+void startStopwatch();
+unsigned long printStopwatchUS();
 int initAnimator();

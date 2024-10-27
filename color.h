@@ -1,4 +1,3 @@
-
 typedef struct _JColor{
     unsigned short red;
     unsigned short green;

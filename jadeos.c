@@ -1,16 +1,14 @@
-// This version pushes all the heavy rendering onto GraphicsMagick to see whether if it can handle the rendering. Turns out yes but on the PI no. It uses 60% of the CPU and brings the system temperature to 80C. Not efficient.
-
 #include "macros.h"
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <pigpio.h>
 
-#include "color.h"
-#include "wsled.h"
-#include "consolescript.h"
-#include "prerender.h"
 #include "animator.h"
+#include "color.h"
 #include "ledmatrix.h"
+#include "wsled.h"
+#include "prerender.h"
 
 JadeTimeTrack faceMovementTimeTrack;
 JadeTimeTrack eyeBlinkTimeTrack;
@@ -19,6 +17,7 @@ JadeTimeTrack boopTimeTrack;
 unsigned int boop = 0;
 
 void renderToBuffer(Image * offscreenImage){
+
 
     if (boop){
         eyeBlinkTimeTrack.loopMode = NoLoop;
@@ -63,29 +62,38 @@ void renderToBuffer(Image * offscreenImage){
 }
 
 
+#define SYSTEM_MESSAGE(MESSAGE) "\x1B[102m\x1B[30m[JadeOS][✅]\x1B[0m "#MESSAGE"\n"
+#define SYSTEM_ERROR(MESSAGE) "\x1B[101m\x1B[30m[JadeOS][❌]\x1B[0m "#MESSAGE"\n"
+#define SYSTEM_MESSAGE_WITH_PARAM(MESSAGE, FORMATS) "\x1B[102m\x1B[30m[JadeOS][✅]\x1B[0m "#MESSAGE"\n", FORMATS
+
+#define LOAD_MODULE(FUNCTION,...)\
+printf(SYSTEM_MESSAGE(Init Module: FUNCTION));\
+startStopwatch();\
+FUNCTION(__VA_ARGS__);\
+printf(SYSTEM_MESSAGE_WITH_PARAM(Fin Module in %lu µs: FUNCTION, printStopwatchUS()));
+
 int main(int argc, char **argv) {
 
-    // initAnimator();
+    gpioInitialise();
+    
+    gpioSetMode(25, PI_INPUT);
 
-    initWS2812BDriver();
-
-    systemNormaLog("Initializing GraphicsMagick...");
-    InitializeMagick(NULL);
-    systemNormaLog("Initialized GraphicsMagick");
-    if (initLedMatrix(argc, argv) || initPreRender() || initAnimator() || initColor()){
-        return 1;
-    }
-
+    LOAD_MODULE(initWS2812BDriver);
+    LOAD_MODULE(InitializeMagick, NULL);
+    LOAD_MODULE(initLedMatrix, argc, argv);
+    LOAD_MODULE(initPreRender);
+    LOAD_MODULE(initAnimator);
+    LOAD_MODULE(initColor);
 
     initializeTimeTrack(&faceMovementTimeTrack);
     initializeTimeTrack(&eyeBlinkTimeTrack);
     initializeTimeTrack(&boopTimeTrack);
-    faceMovementTimeTrack.animationDurationUS = SECONDS_TO_US(4);
+    faceMovementTimeTrack.animationDurationUS = SECONDS_TO_US(5);
     faceMovementTimeTrack.loopMode = Loop;
 
     eyeBlinkTimeTrack.loopMode = LoopDelay;
-    eyeBlinkTimeTrack.animationDurationUS = MILLISECONDS_TO_US(500);
-    eyeBlinkTimeTrack.cooldownDurationUS = SECONDS_TO_US(1);
+    eyeBlinkTimeTrack.animationDurationUS = MILLISECONDS_TO_US(750);
+    eyeBlinkTimeTrack.cooldownDurationUS = SECONDS_TO_US(2);
 
     boopTimeTrack.animationDurationUS = SECONDS_TO_US(4);
 
@@ -107,16 +115,16 @@ int main(int argc, char **argv) {
             clearMatrix();
             return 0;
         }
-        if (strcmp("boop\n", command) == 0){
+        if (strcmp("boop\n", command) == 0 || gpioRead(25)){
             printf("Boop.\n");
             boop = 1;
         }
         updateColorIndex();
         requestRender();
-        usleep(20000);
+        usleep(5000);
         renderLEDStrips();
         // clearLEDStrips();
-        usleep(20000);
+        usleep(5000);
 
     }
 
