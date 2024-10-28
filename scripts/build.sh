@@ -7,7 +7,7 @@ FILE=$2
 
 if [ -z $FILE ] 
 then
-    FILE="./jadeos.c";
+    FILE="./jadeled.c";
 fi
 
 GRAPHICS_MAGICK_ARGS=`GraphicsMagick-config --cppflags --ldflags --libs`

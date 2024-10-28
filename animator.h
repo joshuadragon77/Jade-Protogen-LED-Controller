@@ -3,8 +3,8 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define SECONDS_TO_US(X) X * 1000000
-#define MILLISECONDS_TO_US(X) X * 1000
+#define SECONDS_TO_US(X) X * 1000000ul
+#define MILLISECONDS_TO_US(X) X * 1000ul
 
 typedef struct _JadeTimeState{
     unsigned long pauseGap;
@@ -12,7 +12,7 @@ typedef struct _JadeTimeState{
 } JadeTimeState;
 
 typedef enum _CooldownMode{
-    RestOnStart, RestOnEnd
+    RestOnStart, RestOnEnd, RestOnCallbackEnd
 } CooldownMode;
 
 typedef enum _LoopMode{
@@ -34,6 +34,8 @@ typedef struct _JadeTimeTrack{
     PlayMode playMode;
 
     JadeTimeState timeState;  
+
+    void (* playbackEndCallback)();
 } JadeTimeTrack;
 
 float fclampf(float number, float min, float max);

@@ -4,7 +4,7 @@
 <svg height="360.0pt" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="720.0pt" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs/>
 <g id="eye" vectornator:layerName="eye">
-<path d="M620.608 100.675L549.081 125.848L404.332 118.044L543.151 140.518L551.955 137.111L631.248 112.156L620.608 100.675Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path 1"/>
+<path d="M631.706 48.2051L604.609 5.04529L576.037 49.073L517.637 76.7713L577.147 104L604.421 141.854L631.023 102.39L681.103 67.9814L631.706 48.2051Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 <g id="nose" vectornator:layerName="nose">
 <path d="M85.745 53.5016L27.9605 89.0054L60.4127 151.388L69.1576 135.211L71.2434 117.47L77.8302 83.972L66.4841 87.1982L58.7769 113.791L52.6335 94.1045L89.6944 78.6289L85.745 53.5016Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>

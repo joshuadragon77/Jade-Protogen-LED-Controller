@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Created with Vectornator (http://vectornator.io/) -->
-<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg height="360.0pt" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="720.0000000000001pt" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs/>
 <g id="eye" vectornator:layerName="eye">
-<path d="M635.133 62.0933L669.026 7.43163L478.562 86.4201L642.703 158.794L621.127 122.623L543.037 89.2727L635.133 62.0933Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
+<path d="M685.675 109.301L584.808 12.2142L461.034 126.249L502.927 111.016L586.753 53.5016L650.585 98.8323L685.675 109.301Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 <g id="nose" vectornator:layerName="nose">
 <path d="M85.745 53.5016L27.9605 89.0054L60.4127 151.388L69.1576 135.211L71.2434 117.47L77.8302 83.972L66.4841 87.1982L58.7769 113.791L52.6335 94.1045L89.6944 78.6289L85.745 53.5016Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>

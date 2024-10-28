@@ -1,3 +1,6 @@
+#ifndef JADE_PRERENDER
+#define JADE_PRERENDER
+
 #include <GraphicsMagick/magick/api.h>
 
 typedef struct _Point{
@@ -28,11 +31,12 @@ typedef struct _Face{
     ImageSequence * mouthOpenAnimation;
 } Face;
 
-extern Image * defaultEyeImage;
-extern ImageSequence eyeSequence;
-extern Image * defaultMawImage;
-extern Image * defaultNoseImage;
-extern Image * defaultEyeBoopImage;
-extern ImageSequence boopEyeSequence;
+
+Image * generateStaticImage(Polygon * polygon);
+Image * generateAnimationLinearInImage(Polygon * fromPolygon, Polygon * toPolygon, unsigned int maximumFrame);
+ImageSequence generateImageSequence(Image * images, unsigned int numberOfImages);
+ImageSequence copyReverseImageSequence(ImageSequence parent);
 
 int initPreRender();
+
+#endif

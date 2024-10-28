@@ -2,13 +2,13 @@
 
 if [ -z $1 ]
 then
-    MAIN="./jadeos.c"
+    MAIN="./jadeled.c"
 else
     MAIN="$1"
 fi
 clear;
 echo "[ 🔨 ] Building...";
-if ./scripts/build.sh "-o ./jadeos" $MAIN
+if ./scripts/build.sh "-o ./jadeled" $MAIN
 then
     echo "[ 🔨 ] Build Success!";
     sleep 1;

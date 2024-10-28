@@ -105,6 +105,9 @@ void obtainTimeTrackFactor(JadeTimeTrack * timeTrack, double * timeFactor){
                         deltaTime = 0;
                         timeTrack->timeState.timeOffset = currentTime;
                         timeTrack->playMode = Stopped;
+                        if (timeTrack->cooldownMode == RestOnCallbackEnd){
+                            timeTrack->playbackEndCallback();
+                        }
                         break;
                     }
                 }
@@ -115,6 +118,7 @@ void obtainTimeTrackFactor(JadeTimeTrack * timeTrack, double * timeFactor){
         };
         case Stopped:{
             switch(timeTrack->cooldownMode){
+                case RestOnCallbackEnd:
                 case RestOnEnd:{
                     *timeFactor = 1;
                     return;

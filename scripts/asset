@@ -5,7 +5,7 @@ const fs = require("fs");
 
 let files = fs.readdirSync("./faces", "utf-8");
 
-let contents = `#define USE_DEFAULT_POLYGONS\n`;
+let contents = `#include "prerender.h"\n#define USE_DEFAULT_POLYGONS\n`;
 for (let file of files){
     let assetName = file.replace(/\.svg/, "");
     
@@ -31,7 +31,7 @@ for (let file of files){
 
         subContent += `Point ${assetName}_${label}Points[] = {\n`;
         
-        let pathMatches = path.matchAll(/(?<Command>[MLZ])(?<Parameter1>\d+\.\d+)? ?(?<Parameter2>\d+\.\d+)?/g);
+        let pathMatches = path.matchAll(/(?<Command>[MLZ])(?<Parameter1>\d+(?:\.\d+)?)? ?(?<Parameter2>\d+(?:\.\d+)?)?/g);
 
         let points = [];
         

@@ -4,9 +4,12 @@
 
 #include "animator.h"
 #include "color.h"
+#include "transition.h"
 
 JColor colorArray[255];
+
 JadeTimeTrack timeTrack;
+JadeTimeTrack colorTransitionTimeTrack;
 
 const JColor * determineColorAtIndex(const float * colorFactor){
 
@@ -21,48 +24,56 @@ void lerpColor(const JColor * colorFrom, const JColor * colorTo, JColor * lerped
     lerpedColor->blue = (unsigned short)(colorFrom->blue + (colorTo->blue - colorFrom->blue) * *lerpFactor);
 }
 
-JColor rainbowElement[] = {
-    {255, 0, 0},
-    {248, 161, 18},
-    {233, 240, 18},
-    {9, 240, 18},
-    {9, 213, 245},
-    {218, 20, 245},
-};
-
-void obtainRainbow(const float * colorFactor, JColor * color){
-    unsigned int selectedIndex = 6 * *colorFactor;
-    unsigned int nextIndex = selectedIndex + 1;
-    if (nextIndex >= 6){
-        nextIndex = 0;
-    }
-
-    JColor * from = &rainbowElement[selectedIndex];
-    JColor * to = &rainbowElement[nextIndex];
-
-    float lerpFactor = (*colorFactor - (float)selectedIndex / 6) / (1.0f / 6);
-
-    lerpColor(from, to, color, &lerpFactor);
-}
-
-void updateColorIndex(){
+void updateColorIndex(JColor * colorArray, void colorTransform(const float * colorFactor, JColor * color)){
     double animationFactor;
-    JColor from = {0, 170 , 255};
-    JColor to = {0, 255, 255};
     obtainTimeTrackFactor(&timeTrack, &animationFactor);
     for (int i = 0;i<255;i++){
         float remainder = 1.0f;
         float specificAnimationFactor = sinf(M_PI * fmodf((float)i / 255 + animationFactor, remainder));
 
-        //obtainRainbow(&specificAnimationFactor, &colorArray[i]);
-        lerpColor(&from, &to, &colorArray[i], &specificAnimationFactor);
+        colorTransform(&specificAnimationFactor, &colorArray[i]);
     }
+}
+
+ColorTransformFunction currentColorTransformFunction = obtainJadenarium;
+ColorTransformFunction previousColorTransformFunction = obtainJadenarium;
+
+void updateColor(){
+    JColor fromColorArray[255];
+    JColor toColorArray[255];
+
+    updateColorIndex(fromColorArray, previousColorTransformFunction);
+    updateColorIndex(toColorArray, currentColorTransformFunction);
+
+    double animationFactor;
+    obtainTimeTrackFactor(&colorTransitionTimeTrack, (double *)&animationFactor);
+
+    float animationFactor2 = (float)animationFactor;
+
+    for (int i = 0;i<255;i++){
+
+        lerpColor(&fromColorArray[i], &toColorArray[i], &colorArray[i], &animationFactor2);
+    }
+}
+
+void transitionToColorTransformFunction(ColorTransformFunction newTransformFunction, unsigned int transitionTimeMS){
+    previousColorTransformFunction = currentColorTransformFunction;
+    currentColorTransformFunction = newTransformFunction;
+
+    colorTransitionTimeTrack.animationDurationUS = MILLISECONDS_TO_US(transitionTimeMS);
+    playTimeTrack(&colorTransitionTimeTrack);
 }
 
 int initColor(){
     initializeTimeTrack(&timeTrack);
+    initializeTimeTrack(&colorTransitionTimeTrack);
+
     timeTrack.animationDurationUS = SECONDS_TO_US(2);
     timeTrack.loopMode = Loop;
+
+    colorTransitionTimeTrack.animationDurationUS = SECONDS_TO_US(1);
+    colorTransitionTimeTrack.cooldownMode = RestOnEnd;
+
     playTimeTrack(&timeTrack);
 
     for (int i = 0;i<255;i++){
