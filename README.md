@@ -1,4 +1,8 @@
-# Jade Protogen LED Controller
+
+![IMG_5323](https://github.com/user-attachments/assets/bca06bf4-59e6-4e12-bc44-04f0d5bd5718)
+[IMG_5322](https://github.com/user-attachments/assets/81365bc8-6e06-40c2-9486-c091a643e569)
+# Jade Protogen LED Controller!
+
 
 Written in C and runs on a Raspberry Pi 4 with the following hardware accessories: Adafruit HUB 75 Hat, WS2818 Led Strips. 
 It is a custom made program that runs my Protogen Head and will have more features coming soon as development goes on.
