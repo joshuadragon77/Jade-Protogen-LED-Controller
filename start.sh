@@ -1,3 +1,3 @@
 #!/bin/env sh
 
-sudo ./jadeos
+sudo ./jadeled

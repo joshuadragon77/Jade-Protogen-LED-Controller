@@ -210,7 +210,7 @@ int initTransition(){
     };
 
     unsigned short numberOfFaceStates = sizeof(faceStateRepository)/sizeof(FaceState * );
-    faceStateStaticImages = (FaceImageCollection *)malloc(numberOfFaceStates * sizeof(FaceImageCollection *));
+    faceStateStaticImages = (FaceImageCollection *)malloc(numberOfFaceStates * sizeof(FaceImageCollection));
 
     for (int i = 0;i<numberOfFaceStates;i++){
         FaceState * faceState = faceStateRepository[i];
