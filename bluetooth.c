@@ -20,67 +20,10 @@
 #include <dbus/dbus.h>
 #include <stdio.h>
 
-void write_value(DBusConnection *connection, const char *char_path, const unsigned char *value, int length) {
-    DBusMessage *msg;
-    DBusMessageIter args;
-    DBusPendingCall *pending;
-    DBusError error;
-    dbus_error_init(&error);
-
-    // Create a new method call message
-    msg = dbus_message_new_method_call("org.bluez", char_path, "org.bluez.GattCharacteristic1", "WriteValue");
-    if (!msg) {
-        fprintf(stderr, "Message Null\n");
-        return;
-    }
-
-    // Append arguments
-    dbus_message_iter_init_append(msg, &args);
-    dbus_message_iter_append_fixed_array(&args, DBUS_TYPE_BYTE, &value, length);
-
-    // Append options dictionary (empty in this case)
-    DBusMessageIter dict;
-    dbus_message_iter_open_container(&args, DBUS_TYPE_ARRAY, "{sv}", &dict);
-    dbus_message_iter_close_container(&args, &dict);
-
-    // Send message and wait for a reply
-    if (!dbus_connection_send_with_reply(connection, msg, &pending, -1)) {
-        fprintf(stderr, "Out of memory\n");
-        dbus_message_unref(msg);
-        return;
-    }
-    if (pending == NULL) {
-        fprintf(stderr, "Pending Call Null\n");
-        dbus_message_unref(msg);
-        return;
-    }
-
-    dbus_connection_flush(connection);
-    dbus_message_unref(msg);
-
-    // Block until we receive a reply
-    dbus_pending_call_block(pending);
-
-    // Get the reply message
-    msg = dbus_pending_call_steal_reply(pending);
-    if (msg == NULL) {
-        fprintf(stderr, "Reply Null\n");
-        return;
-    }
-
-    // Check for errors
-    if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_ERROR) {
-        fprintf(stderr, "Error: %s\n", dbus_message_get_error_name(msg));
-    }
-
-    // Clean up
-    dbus_message_unref(msg);
-    dbus_pending_call_unref(pending);
-}
-
 int main() {
     DBusConnection *connection;
     DBusError error;
+    DBusMessageIter iter;
 
     // Initialize the D-Bus error structure
     dbus_error_init(&error);
@@ -96,12 +39,68 @@ int main() {
         return 1;
     }
 
-    // Define the characteristic path and value to write
-    const char *char_path = "/org/bluez/hci0/dev_XX_XX_XX_XX_XX_XX/serviceXX/charYYYY";
-    unsigned char value[] = { 0x01, 0x02, 0x03, 0x04 };
+    DBusMessage * message = dbus_message_new_method_call("org.bluez", "/org/bluez/hci0", "org.freedesktop.DBus.Properties", "Set");
 
-    // Write the value to the characteristic
-    write_value(connection, char_path, value, sizeof(value) / sizeof(value[0]));
+    const char * interfaceName = "org.bluez.Adapter1";
+    const char * memberName = "Powered";
+
+    dbus_message_iter_init_append(message, &iter);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interfaceName);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &memberName);
+    
+    DBusMessageIter sub;
+    dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, "b", &sub);
+    dbus_bool_t value = 1;
+    dbus_message_iter_append_basic(&sub, DBUS_TYPE_BOOLEAN, &value);
+    dbus_message_iter_close_container(&iter, &sub);
+
+    if (!message){
+        printf("Something bad happened here. #1");
+        return 1;
+    }
+    
+    if (!dbus_connection_send(connection, message, 0)){
+        printf("Something bad happened here. #2");
+        return 1;
+    }
+
+    dbus_connection_flush(connection);
+    dbus_message_unref(message);
+
+    message = dbus_message_new_method_call("org.bluez", "/org/bluez/hci0", "org.freedesktop.DBus.Properties", "Get");
+
+    const char * interfaceName2 = "org.bluez.Adapter1";
+    const char * memberName2 = "Powered";
+
+    dbus_message_iter_init_append(message, &iter);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interfaceName2);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &memberName2);
+
+    dbus_connection_read_write_dispatch(connection, 1000);
+
+    DBusMessage * receivedMessage = dbus_connection_send_with_reply_and_block(connection, message, 1000, &error);
+
+    if (dbus_error_is_set(&error)){
+        printf("%s", error.message);
+        return 1;
+    }
+
+    DBusMessageIter rIter;
+
+    dbus_message_iter_init(receivedMessage, &rIter);
+
+    dbus_bool_t outputValue = 0;
+
+    char * signature = dbus_message_iter_get_signature(&rIter);
+
+
+    DBusMessageIter rSub;
+    dbus_message_iter_recurse(&rIter, &rSub);
+
+    dbus_message_iter_get_basic(&rSub, &outputValue);
+    printf("%s\n", signature);
+
+    printf("%d\n", outputValue);
 
     return 0;
 }
