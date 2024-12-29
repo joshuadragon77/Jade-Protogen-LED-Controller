@@ -6,6 +6,7 @@
 
 #include "animator.h"
 #include "color.h"
+#include "async_dbus.h"
 #include "ledmatrix.h"
 #include "wsled.h"
 #include "prerender.h"
@@ -41,6 +42,8 @@ FUNCTION(__VA_ARGS__);\
 printf(SYSTEM_MESSAGE_WITH_PARAM(Fin Module in %lu µs: FUNCTION, printStopwatchUS()));
 
 int main(int argc, char **argv) {
+
+    main_a();
 
     // LOAD_MODULE(gpioInitialise);
 

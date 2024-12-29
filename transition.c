@@ -38,10 +38,10 @@ void obtainRainbow(const float * colorFactor, JColor * color){
 }
 
 void obtainJadenarium(const float * colorFactor, JColor * color){
-    // JColor from = {0, 170, 255};
-    // JColor to = {0, 255, 255};
-    JColor from = {255, 0, 0};
-    JColor to = {0, 255, 0};
+    JColor from = {0, 170, 255};
+    JColor to = {0, 255, 255};
+    // JColor from = {255, 0, 0};
+    // JColor to = {0, 255, 0};
 
     lerpColor(&from, &to, color, colorFactor);
 }
