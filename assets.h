@@ -244,6 +244,67 @@ Polygon JadesFaceBlink_mouthPolygon = {
     "JadesFaceBlink - mouth",
 };
 
+Point JadesHappyBoop_eyePoints[] = {
+    {190, 0},
+    {0, 79},
+    {164, 152},
+    {142, 116},
+    {64, 82},
+    {156, 55},
+};
+Polygon JadesHappyBoop_eyePolygon = {
+    JadesHappyBoop_eyePoints,
+    6,
+    190,
+    152,
+    "JadesHappyBoop - eye",
+};
+
+Point JadesHappyBoop_nosePoints[] = {
+    {0, 35},
+    {32, 97},
+    {41, 81},
+    {43, 63},
+    {50, 30},
+    {38, 33},
+    {31, 60},
+    {25, 40},
+    {62, 25},
+    {58, 0},
+};
+Polygon JadesHappyBoop_nosePolygon = {
+    JadesHappyBoop_nosePoints,
+    10,
+    62,
+    97,
+    "JadesHappyBoop - nose",
+};
+
+Point JadesHappyBoop_mouthPoints[] = {
+    {368, 78},
+    {268, 107},
+    {132, 75},
+    {55, 112},
+    {0, 98},
+    {30, 135},
+    {77, 143},
+    {144, 114},
+    {259, 140},
+    {369, 105},
+    {516, 111},
+    {541, 76},
+    {595, 0},
+    {509, 65},
+    {477, 79},
+};
+Polygon JadesHappyBoop_mouthPolygon = {
+    JadesHappyBoop_mouthPoints,
+    15,
+    595,
+    143,
+    "JadesHappyBoop - mouth",
+};
+
 Point JadesPrideFace_eyePoints[] = {
     {87, 0},
     {58, 44},

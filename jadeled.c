@@ -102,6 +102,9 @@ int main(int argc, char **argv) {
         if (command[0] == 'p'){
             attemptTransition(&prideFace, 500);
         }
+        if (command[0] == 'l'){
+            attemptTransition(&boopFace, 500);
+        }
         updateColor();
         requestRender();
         usleep(5000);

@@ -51,6 +51,7 @@ extern FaceState blinkFace;
 extern FaceState approvalFace;
 extern FaceState angryFace;
 extern FaceState prideFace;
+extern FaceState boopFace;
 
 FaceImageCollection obtainFaceImages();
 void attemptTransition(FaceState * newFaceState, unsigned int transitionTimeMS);

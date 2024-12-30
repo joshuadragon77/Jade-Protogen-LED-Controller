@@ -129,6 +129,17 @@ FaceState prideFace = {
     obtainRainbow    
 };
 
+FaceState boopFace = {
+    &JadesHappyBoop_eyePolygon,
+    &JadesFace_mouthPolygon,
+    &JadesFace_nosePolygon,
+    0,
+    {40, 0},
+    {0, 0},
+    {0, 0},
+    obtainRainbow    
+};
+
 
 FaceImageCollection * faceStateStaticImages;
 FaceAnimationCollection ** faceStateTransitionImages;
@@ -209,6 +220,7 @@ int initTransition(){
         &angryFace,
         &approvalFace,
         &prideFace,
+        &boopFace
     };
 
     unsigned short numberOfFaceStates = sizeof(faceStateRepository)/sizeof(FaceState * );
