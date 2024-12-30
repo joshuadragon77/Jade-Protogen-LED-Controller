@@ -41,16 +41,256 @@ void sendAsynchronousDBusMessage(DBusConnection * connection, DBusMessage * mess
     asyncMessage->ready = 0;
 }
 
-void parseIntrospectable(const char * busName, const char * objectPath, const char * introspectOutput){
+int matchCharacter(char ** readHead, const char targetCharacter, unsigned int maxSearchCount){
+    unsigned int count = 0;
+    while (**readHead != targetCharacter){
+        if (**readHead == 0 || count >= maxSearchCount){
+            return -1;
+        }
+        *readHead += 1;
+        count ++;
+    }
 
+    return 0 ;
 }
+
+int matchElement(char ** readHead, char ** start, char ** end){
+    *end = *start = 0;
+
+    if (matchCharacter(readHead, '<', -1) == -1){
+        return -1;
+    }
+    *start = *readHead;
+    *readHead += 1;
+
+    if (matchCharacter(readHead, '>', -1) == -1){
+        return -1;
+    }
+
+    *end = *readHead;
+    *readHead += 1;
+    
+    return 0;
+}
+
+char getElementType(const char * readHead){
+    char type = *(readHead + 1);
+
+    switch(type){
+        case '/':
+        case '!':{
+            return type;
+        }
+        default:{
+            return '\0';
+        }
+    }
+}
+
+void copyStringSub(char * dest, char * start, char * end){
+    unsigned int length = end - start;
+    for (unsigned int index = 0;index<length;index++){
+        *(dest + index) = *(start + index);
+    }
+    *(dest + length) = 0;
+}
+
+int getElementName(char * readHead, char * maximumReadHead, char ** start, char ** end){
+    if (getElementType(readHead)){
+        ++ readHead;
+    }
+
+    *start = ++ readHead;
+    if (matchCharacter(&readHead, ' ', maximumReadHead - readHead) == -1){
+        *end = maximumReadHead;
+        return -1;
+    };
+
+    *end = readHead;
+
+    return 0;
+}
+
+int getAttributeValue(char * readHead, char * maximumReadHead, const char * attributeName, char ** start, char ** end){
+
+    unsigned int totalMatchesRequired = strlen(attributeName);
+
+    while (readHead < maximumReadHead){
+
+        unsigned int matchIndex = 0;
+        for (;matchIndex < totalMatchesRequired;matchIndex++){
+            readHead ++;
+            if (matchCharacter(&readHead, *(attributeName + matchIndex), 1) == -1){
+                break;
+            }
+        }
+
+
+        if (matchIndex == totalMatchesRequired && matchCharacter(&readHead, '=', 1) == 0){
+            matchCharacter(&readHead, '"', 1);
+            *start = readHead += 1;
+            matchCharacter(&readHead, '"', maximumReadHead - readHead);
+            *end = readHead;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+typedef struct _DBusInterface{
+    HashableTable methods;
+    HashableTable properties;
+} DBusInterface;
+
+typedef struct _DBusProperty{
+    char propertyType[6];
+} DBusProperty;
+
+typedef enum _DBusArgumentDirection {
+    DBUSArgumentDir_Out,
+    DBUSArgumentDir_In
+} DBusArgumentDirection;
+
+typedef struct _DBusArgument{
+    char type[6];
+    DBusArgumentDirection direction;
+} DBusArgument;
+
+
+typedef struct _DBusMethod{
+    DBusArgument arguments[6];
+    unsigned int argumentLength;
+} DBusMethod;
 
 // To store the members of an interface
 HashableTable interfaceCache;
-// To store what interfaces are supported by an object
-HashableTable objectInterfaceCache;
 
-int main_a() {
+void cacheIntrospectXML(char * introspectOutput){
+    char * readHead = introspectOutput;
+    unsigned int introspectOutputLength = strlen(introspectOutput);
+
+    char * start, * end;
+
+    char * startBuffer, * endBuffer;
+    char buffer[255];
+    
+    while (matchElement(&readHead, &start, &end) != -1){
+
+        getElementName(start, end, &startBuffer, &endBuffer);
+        copyStringSub(buffer, startBuffer, endBuffer);
+
+        if (getElementType(start) == '!'){
+            continue;
+        }
+
+        if (getElementType(start) != '/'){
+
+            if (strcmp("interface", buffer) == 0){
+                char buffer3[255];
+
+                getAttributeValue(start, end, "name", &startBuffer, &endBuffer);
+                copyStringSub(buffer, startBuffer, endBuffer);
+
+
+                printf("Interface: %s\n", buffer);
+
+                if (hasValueFromHashableTable(&interfaceCache, buffer) == -1){
+
+                    DBusInterface * interface = (DBusInterface *)malloc(sizeof(DBusInterface));
+
+                    initHashableTable(&interface->methods, 100);
+                    initHashableTable(&interface->properties, 100);
+
+                    setValueToHashableTable(&interfaceCache, buffer, interface);
+
+                    while (matchElement(&readHead, &start, &end) != -1){
+                        getElementName(start, end, &startBuffer, &endBuffer);
+                        copyStringSub(buffer, startBuffer, endBuffer);
+
+                        if (getElementType(start) != '/'){
+                            if (strcmp("method", buffer) == 0){
+                                getAttributeValue(start, end, "name", &startBuffer, &endBuffer);
+                                copyStringSub(buffer, startBuffer, endBuffer);
+
+                                DBusMethod * method = (DBusMethod *)malloc(sizeof(DBusMethod));
+
+                                setValueToHashableTable(&interface->methods, buffer, method);
+
+                                printf("Method: %s\n", buffer);
+
+                                unsigned int argumentSize = 0;
+
+                                while (matchElement(&readHead, &start, &end) != -1){
+
+                                    getElementName(start, end, &startBuffer, &endBuffer);
+                                    copyStringSub(buffer, startBuffer, endBuffer);
+
+                                    if (strcmp("arg", buffer) == 0){
+
+                                        getAttributeValue(start, end, "name", &startBuffer, &endBuffer);
+                                        copyStringSub(buffer, startBuffer, endBuffer);
+
+                                        printf("Argument: %s\n", buffer);
+
+                                        getAttributeValue(start, end, "type", &startBuffer, &endBuffer);
+                                        copyStringSub(buffer, startBuffer, endBuffer);
+
+                                        strcpy(method->arguments[argumentSize].type, buffer);
+
+                                        printf("Argument Type: %s\n", buffer);
+
+                                        getAttributeValue(start, end, "direction", &startBuffer, &endBuffer);
+                                        copyStringSub(buffer, startBuffer, endBuffer);
+
+                                        method->arguments[argumentSize].direction = strcmp(buffer, "out") == 0 ? DBUSArgumentDir_Out : DBUSArgumentDir_In;
+
+                                        printf("Argument Direction: %s\n", buffer);
+
+                                        argumentSize += 1;
+                                    }else{
+                                        break;
+                                    }
+                                }
+
+                                method->argumentLength = argumentSize;
+                            }
+                            if (strcmp("property", buffer) == 0){
+
+                                getAttributeValue(start, end, "name", &startBuffer, &endBuffer);
+                                copyStringSub(buffer, startBuffer, endBuffer);
+
+                                DBusProperty * property = (DBusProperty *)malloc(sizeof(DBusProperty));
+
+                                setValueToHashableTable(&interface->properties, buffer, property);
+
+                                getAttributeValue(start, end, "type", &startBuffer, &endBuffer);
+                                copyStringSub(buffer, startBuffer, endBuffer);
+
+                                strcpy(property->propertyType, buffer);
+                            }
+                        }else{
+                            getElementName(start, end, &startBuffer, &endBuffer);
+                            copyStringSub(buffer, startBuffer, endBuffer);
+
+                            if (strcmp("interface", buffer) == 0){
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+        };
+    }
+    
+    DBusInterface * interface = 0;
+    DBusMethod * method = 0;
+}
+
+int main() {
+    initHashableTable(&interfaceCache, 500);
+
     DBusConnection *connection;
     DBusError error;
     DBusAsyncMessage asyncMessage;
@@ -69,7 +309,7 @@ int main_a() {
         return 1;
     }
 
-    DBusMessage * message = dbus_message_new_method_call("org.bluez", "/org/bluez/hci0", "org.freedesktop.DBus.Introspectable", "Introspect");
+    DBusMessage * message = dbus_message_new_method_call("org.bluez", "/org/bluez/hci1", "org.freedesktop.DBus.Introspectable", "Introspect");
 
     // const char * interfaceName2 = "org.bluez.Adapter1";
     // const char * memberName2 = "Powered";
@@ -87,7 +327,7 @@ int main_a() {
         updateLoopEvent(connection, 1000);
     }
 
-    printf("Ready!");
+    printf("Ready!\n");
 
     DBusMessageIter iter;
     dbus_message_iter_init(asyncMessage.replyMessage, &iter);
@@ -96,9 +336,9 @@ int main_a() {
 
     dbus_message_iter_get_basic(&iter, &output);
 
-    printf("%s", output);
+    // printf("%s", output);
 
-    parseIntrospectable(output);
+    cacheIntrospectXML(output);
 
     // dbus_connection_send_with_reply()
     return 0;

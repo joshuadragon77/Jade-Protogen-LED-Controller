@@ -19,6 +19,8 @@ int getValueFromHashableTable(HashableTable * table, const char * key, void ** v
 
 int setValueToHashableTable(HashableTable * table, const char * key, void * value);
 
+int hasValueFromHashableTable(HashableTable * table, const char * key);
+
 int main_b(void);
 
 #endif

@@ -21,6 +21,27 @@ void initHashableTable(HashableTable * table, const unsigned int length){
     }
 }
 
+int hasValueFromHashableTable(HashableTable * table, const char * key){
+    uint64_t hash;
+
+    fnv1aHash((uint8_t *)key, strlen(key), &hash);
+
+    unsigned long index = hash % table->tableSize; 
+
+    for (;index<table->tableSize;index ++){
+        if (table->keyTable[index] == 0){
+            return -1;
+        }
+        if (strcmp(table->keyTable[index], key) == 0){
+            return 0;
+        }else{
+            index ++;
+        }
+    };
+
+    return -1;
+}
+
 int getValueFromHashableTable(HashableTable * table, const char * key, void ** value){
     uint64_t hash;
 
