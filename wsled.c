@@ -14,7 +14,7 @@ ws2811_t ledStrip = {
             .invert = 0,
             .count = 48,
             .strip_type = WS2811_STRIP_GRB,
-            .brightness = 100
+            .brightness = 75
         }
     }
 };

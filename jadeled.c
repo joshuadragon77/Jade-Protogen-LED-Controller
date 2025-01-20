@@ -116,10 +116,10 @@ int main(int argc, char **argv) {
         }
         updateColor();
         requestRender();
-        usleep(5000);
+        usleep(8000);
         renderLEDStrips();
         // clearLEDStrips();
-        usleep(5000);
+        usleep(8000);
 
     }
 
