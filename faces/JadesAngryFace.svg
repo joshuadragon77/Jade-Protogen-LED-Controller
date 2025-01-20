@@ -4,12 +4,12 @@
 <svg height="360.0pt" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="720.0pt" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs/>
 <g id="eye" vectornator:layerName="eye">
-<path d="M681.495 48.43L671.162 5.22751L424.097 110.285L562.916 132.758L571.72 129.351L650.585 98.8323L681.495 48.43Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
+<path d="M681.495 48.43L620.334 45.2856L500.786 82.3966L624.268 107.914L603.549 116.803L501.065 90.7506L492.433 88.5564L424.097 110.285L562.916 132.758L571.72 129.351L650.585 98.8323L681.495 48.43Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 <g id="nose" vectornator:layerName="nose">
 <path d="M85.745 53.5016L27.9605 89.0054L60.4127 151.388L69.1576 135.211L71.2434 117.47L77.8302 83.972L66.4841 87.1982L58.7769 113.791L52.6335 94.1045L89.6944 78.6289L85.745 53.5016Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 <g id="mouth" vectornator:layerName="mouth">
-<path d="M502.368 275.373L392.732 273.817L293.193 303.245L156.768 270.756L79.7516 308.086L25.1097 294.386L55.4908 331.337L102.331 338.727L169.353 310.32L284.332 336.393L393.638 301.294L540.581 307.475L563.291 310.378L619.545 323.291L533.812 260.533L502.368 275.373Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
+<path d="M502.368 275.373L408.767 300.839L294.707 258.421L198.52 275.179L122.929 259.488L25.1097 294.386L55.4908 331.337L134.075 297.445L211.104 314.743L292.576 279.542L409.673 328.316L540.581 307.475L563.291 310.378L619.545 323.291L533.812 260.533L502.368 275.373Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 </svg>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Created with Vectornator (http://vectornator.io/) -->
-<svg height="360.0pt" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="720.0pt" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg height="360.0pt" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 720 360" width="720.0pt" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs/>
-<g id="eye">
-<path d="M681.495 48.43L671.162 5.22751L424.097 110.285L562.916 132.758L571.72 129.351L650.585 98.8323L681.495 48.43Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none"/>
+<g id="eye" vectornator:layerName="eye">
+<path d="M681.495 48.43L671.162 5.22751L556.433 63.9868L639.21 103.345L603.549 116.803L492.433 88.5564L424.097 110.285L562.916 132.758L571.72 129.351L650.585 98.8323L681.495 48.43Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path 1"/>
 </g>
-<g id="nose">
-<path d="M85.745 53.5016L27.9605 89.0054L60.4127 151.388L69.1576 135.211L71.2434 117.47L77.8302 83.972L66.4841 87.1982L58.7769 113.791L52.6335 94.1045L89.6944 78.6289L85.745 53.5016Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none"/>
+<g id="nose" vectornator:layerName="nose">
+<path d="M85.745 53.5016L27.9605 89.0054L60.4127 151.388L69.1576 135.211L71.2434 117.47L77.8302 83.972L66.4841 87.1982L58.7769 113.791L52.6335 94.1045L89.6944 78.6289L85.745 53.5016Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
-<g id="mouth">
-<path d="M502.368 275.373L392.732 273.817L293.193 303.245L156.768 270.756L79.7516 308.086L25.1097 294.386L55.4908 331.337L102.331 338.727L169.353 310.32L284.332 336.393L393.638 301.294L540.581 307.475L566.042 272.456L619.507 196.234L533.812 260.533L502.368 275.373Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none"/>
+<g id="mouth" vectornator:layerName="mouth">
+<path d="M502.368 275.373L392.732 273.817L293.193 303.245L156.768 270.756L79.7516 308.086L25.1097 294.386L55.4908 331.337L102.331 338.727L169.353 310.32L284.332 336.393L393.638 301.294L540.581 307.475L566.042 272.456L619.507 196.234L533.812 260.533L502.368 275.373Z" fill="#00aaff" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="path"/>
 </g>
 </svg>
