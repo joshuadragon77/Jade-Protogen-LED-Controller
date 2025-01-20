@@ -44,7 +44,7 @@ void obtainRainbow(const float * colorFactor, JColor * color){
 }
 
 void obtainJadenarium(const float * colorFactor, JColor * color){
-    JColor from = {0, 170, 255};
+    JColor from = {0, 100, 255};
     JColor to = {0, 255, 255};
     // JColor from = {255, 0, 0};
     // JColor to = {0, 255, 0};
@@ -60,14 +60,14 @@ void obtainAlder(const float * colorFactor, JColor * color){
 }
 
 void obtainAngry(const float * colorFactor, JColor * color){
-    JColor from = {255, 0, 0};
-    JColor to = {255, 0, 0};
+    JColor from = {200, 0, 25};
+    JColor to = {255, 0, 75};
 
     lerpColor(&from, &to, color, colorFactor);
 }
 
 void obtainHappy(const float * colorFactor, JColor * color){
-    JColor from = {0, 255, 0};
+    JColor from = {0, 255, 150};
     JColor to = {0, 255, 0};
 
     lerpColor(&from, &to, color, colorFactor);
@@ -97,8 +97,8 @@ FaceState blinkFace = {
     &JadesFace_nosePolygon,
     0,
     {0, 50},
-    {0, -15},
-    {-10, 0},
+    {0, -20},
+    {-15, 5},
     obtainJadenarium    
 };
 

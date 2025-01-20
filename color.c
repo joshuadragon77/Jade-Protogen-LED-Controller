@@ -10,6 +10,7 @@ JColor colorArray[255];
 
 JadeTimeTrack timeTrack;
 JadeTimeTrack colorTransitionTimeTrack;
+JadeTimeTrack introTimeTrack;
 
 const JColor * determineColorAtIndex(const float * colorFactor){
 
@@ -29,7 +30,8 @@ void updateColorIndex(JColor * colorArray, void colorTransform(const float * col
     obtainTimeTrackFactor(&timeTrack, &animationFactor);
     for (int i = 0;i<255;i++){
         float remainder = 1.0f;
-        float specificAnimationFactor = sinf(M_PI * fmodf((float)i / 255 + animationFactor, remainder));
+        // float specificAnimationFactor = fmodf((float)i / 255 + animationFactor, remainder);
+        float specificAnimationFactor = (sinf(2 * M_PI * (i / 255.0 + animationFactor)) + 1 ) / 2;
 
         colorTransform(&specificAnimationFactor, &colorArray[i]);
     }
@@ -46,13 +48,25 @@ void updateColor(){
     updateColorIndex(toColorArray, currentColorTransformFunction);
 
     double animationFactor;
-    obtainTimeTrackFactor(&colorTransitionTimeTrack, (double *)&animationFactor);
+    obtainTimeTrackFactor(&colorTransitionTimeTrack, &animationFactor);
+
+    double animationFactor3;
+    obtainTimeTrackFactor(&introTimeTrack, &animationFactor3);
+
+    animationFactor3 = 1 - pow(animationFactor3 - 1, 2);
+
+    animationFactor3 *= 1.25;
 
     float animationFactor2 = (float)animationFactor;
 
+    JColor black = {0, 0, 0};
+
     for (int i = 0;i<255;i++){
 
+        float animationFactor5 = fclamp((animationFactor3 * 255.0 - (255 - i) ) / 50.0, 0, 1);
+
         lerpColor(&fromColorArray[i], &toColorArray[i], &colorArray[i], &animationFactor2);
+        lerpColor(&black, &colorArray[i], &colorArray[i], &animationFactor5);
     }
 }
 
@@ -67,14 +81,20 @@ void transitionToColorTransformFunction(ColorTransformFunction newTransformFunct
 int initColor(){
     initializeTimeTrack(&timeTrack);
     initializeTimeTrack(&colorTransitionTimeTrack);
+    initializeTimeTrack(&introTimeTrack);
 
-    timeTrack.animationDurationUS = SECONDS_TO_US(2);
+    timeTrack.animationDurationUS = SECONDS_TO_US(3);
     timeTrack.loopMode = Loop;
 
     colorTransitionTimeTrack.animationDurationUS = SECONDS_TO_US(1);
     colorTransitionTimeTrack.cooldownMode = RestOnEnd;
 
+    introTimeTrack.animationDurationUS = SECONDS_TO_US(4);
+    introTimeTrack.cooldownMode = RestOnEnd;
+    introTimeTrack.loopMode = NoLoop;
+
     playTimeTrack(&timeTrack);
+    playTimeTrack(&introTimeTrack);
 
     for (int i = 0;i<255;i++){
         colorArray[i].red = 0;

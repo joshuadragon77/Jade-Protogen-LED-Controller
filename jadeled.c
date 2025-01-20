@@ -27,9 +27,9 @@ void renderToBuffer(Image * offscreenImage){
     
     FaceImageCollection faceImageReturns = obtainFaceImages();
 
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.eyeImage, 425 + 20 * xOffset + faceImageReturns.eyeOffset.xOffset, 5 + 20 * yOffset + faceImageReturns.eyeOffset.yOffset);
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.mouthImage, 25 + 10 * xOffset + faceImageReturns.mouthOffset.xOffset, 180 + 20 * yOffset + faceImageReturns.mouthOffset.yOffset);
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.noseImage, 28 + 2 * xOffset + faceImageReturns.noseOffset.xOffset, 30 + 15 * yOffset + faceImageReturns.noseOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.eyeImage, 425 + 20 * xOffset + faceImageReturns.eyeOffset.xOffset, 10 + 25 * yOffset + faceImageReturns.eyeOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.mouthImage, 25 + 10 * xOffset + faceImageReturns.mouthOffset.xOffset, 185 + 30 * yOffset + faceImageReturns.mouthOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.noseImage, 28 + 2 * xOffset + faceImageReturns.noseOffset.xOffset, 30 + 20 * yOffset + faceImageReturns.noseOffset.yOffset);
 }
 
 
