@@ -19,7 +19,13 @@ JColor rainbowElement[] = {
 };
 
 double jadenariumAnimationFactor(double timeFactor){
-    return (sin(timeFactor + 3.8) + 0.611857890943) / -0.384306717893;
+    
+    timeFactor = ( - cos(M_PI * timeFactor) + 1) / 2;
+    // return ((timeFactor - 0.4) * (timeFactor - 1.4) * (timeFactor - 2.4) + 1.344) / 1.68;
+    // return (sin(timeFactor + 3.8) + 0.611857890943) / -0.384306717893;
+
+    return (sin(timeFactor + 7.05) - 0.69384494493) / 0.287004890691;
+    // return (sin(timeFactor - 1.8) + 0.973847630878) / 0.256491539979;
 }
 
 void obtainRainbow(const float * colorFactor, JColor * color){
@@ -90,9 +96,9 @@ FaceState blinkFace = {
     &JadesFace_mouthPolygon,
     &JadesFace_nosePolygon,
     0,
-    {0, 90},
-    {0, 0},
-    {0, 0},
+    {0, 50},
+    {0, -15},
+    {-10, 0},
     obtainJadenarium    
 };
 
@@ -101,9 +107,9 @@ FaceState approvalFace = {
     &JadesFace_mouthPolygon,
     &JadesFace_nosePolygon,
     0,
-    {0, 0},
-    {0, 0},
-    {0, 0},
+    {-10, 0},
+    {0, -20},
+    {0, -5},
     obtainHappy    
 };
 
@@ -112,9 +118,9 @@ FaceState angryFace = {
     &JadesAngryFace_mouthPolygon,
     &JadesFace_nosePolygon,
     0,
-    {0, 0},
-    {0, 20},
-    {0, 0},
+    {20, 0},
+    {0, 30},
+    {-10, 0},
     obtainAngry    
 };
 
@@ -123,9 +129,9 @@ FaceState prideFace = {
     &JadesFace_mouthPolygon,
     &JadesFace_nosePolygon,
     0,
-    {40, 0},
-    {0, 0},
-    {0, 0},
+    {30, 0},
+    {5, 5},
+    {5, 5},
     obtainRainbow    
 };
 
@@ -134,9 +140,9 @@ FaceState boopFace = {
     &JadesFace_mouthPolygon,
     &JadesFace_nosePolygon,
     0,
-    {40, 0},
-    {0, 0},
-    {0, 0},
+    {60, 0},
+    {-10, -10},
+    {-20, 0},
     obtainRainbow    
 };
 

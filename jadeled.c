@@ -27,9 +27,9 @@ void renderToBuffer(Image * offscreenImage){
     
     FaceImageCollection faceImageReturns = obtainFaceImages();
 
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.eyeImage, 425 + 5 * xOffset + faceImageReturns.eyeOffset.xOffset, 5 + 5 * yOffset + faceImageReturns.eyeOffset.yOffset);
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.mouthImage, 25 + 15 * xOffset + faceImageReturns.mouthOffset.xOffset, 196 + 15 * yOffset + faceImageReturns.mouthOffset.yOffset);
-    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.noseImage, 28 + 5 * xOffset + faceImageReturns.noseOffset.xOffset, 25 + 5 * yOffset + faceImageReturns.noseOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.eyeImage, 425 + 20 * xOffset + faceImageReturns.eyeOffset.xOffset, 5 + 20 * yOffset + faceImageReturns.eyeOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.mouthImage, 25 + 30 * xOffset + faceImageReturns.mouthOffset.xOffset, 180 + 20 * yOffset + faceImageReturns.mouthOffset.yOffset);
+    CompositeImage(offscreenImage, OverCompositeOp, faceImageReturns.noseImage, 28 + 10 * xOffset + faceImageReturns.noseOffset.xOffset, 25 + 10 * yOffset + faceImageReturns.noseOffset.yOffset);
 }
 
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     initializeTimeTrack(&faceMovementTimeTrack);
     initializeTimeTrack(&eyeBlinkTimeTrack);
     initializeTimeTrack(&boopTimeTrack);
-    faceMovementTimeTrack.animationDurationUS = SECONDS_TO_US(5);
+    faceMovementTimeTrack.animationDurationUS = SECONDS_TO_US(3);
     faceMovementTimeTrack.loopMode = Loop;
 
     eyeBlinkTimeTrack.loopMode = LoopDelay;
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 
     while (true){
         
-        char command[1];
+        char command[50];
         char emptyString[1];
 
         read(0, command, sizeof(command));
@@ -104,6 +104,15 @@ int main(int argc, char **argv) {
         }
         if (command[0] == 'l'){
             attemptTransition(&boopFace, 500);
+        }
+        if (command[0] == 't'){
+            attemptTransition(&prideFace, 500);
+            textMode = 1;
+            for (int i = 1;i<42;i++){
+                renderBuffer[i - 1] = command[i];
+            }
+        }else{
+            textMode = 0;
         }
         updateColor();
         requestRender();

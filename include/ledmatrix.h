@@ -12,3 +12,6 @@ void requestRender();
 void renderToBuffer(Image * offscreenImage);
 int initLedMatrix(int argc, char ** argv);
 void clearMatrix();
+
+extern char renderBuffer[41];
+extern uint8_t textMode;
