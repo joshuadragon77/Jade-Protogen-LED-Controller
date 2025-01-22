@@ -48,10 +48,10 @@ int main(int argc, char **argv) {
 
     // gpioSetMode(25, PI_INPUT);
 
-    LOAD_MODULE(initWS2812BDriver);
     LOAD_MODULE(InitializeMagick, NULL);
-    LOAD_MODULE(initTransition);
+    LOAD_MODULE(initWS2812BDriver);
     LOAD_MODULE(initLedMatrix, argc, argv);
+    LOAD_MODULE(initTransition);
     LOAD_MODULE(initPreRender);
     LOAD_MODULE(initAnimator);
     LOAD_MODULE(initColor);

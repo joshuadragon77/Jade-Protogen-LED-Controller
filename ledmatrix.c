@@ -106,25 +106,25 @@ void renderToMatrix(){
 
         led_canvas_clear(offscreenCanvas);
 
-        draw_text(offscreenCanvas, primaryFont, 6 * (10 - strlen(textBuffer)), 11, 255, 255, 255, textBuffer, 0);
+        draw_text(offscreenCanvas, primaryFont, 6 * (10 - strlen(textBuffer)), 11, color->red, color->green, color->blue, textBuffer, 0);
 
         for (int i = 0;i<10;i++){
             textBuffer[i] = *(data ++);
         }
 
-        draw_text(offscreenCanvas, primaryFont, 64, 11, 255, 255, 255, textBuffer, 0);
+        draw_text(offscreenCanvas, primaryFont, 64, 11, color->red, color->green, color->blue, textBuffer, 0);
 
         for (int i = 0;i<10;i++){
             textBuffer[i] = *(data ++);
         }
 
-        draw_text(offscreenCanvas, primaryFont, 6 * (10 - strlen(textBuffer)), 11 + height_font(primaryFont), 255, 255, 255, textBuffer, 0);
+        draw_text(offscreenCanvas, primaryFont, 6 * (10 - strlen(textBuffer)), 11 + height_font(primaryFont), color->red, color->green, color->blue, textBuffer, 0);
 
         for (int i = 0;i<10;i++){
             textBuffer[i] = *(data ++);
         }
 
-        draw_text(offscreenCanvas, primaryFont, 64, 11 + height_font(primaryFont), 255, 255, 255, textBuffer, 0);
+        draw_text(offscreenCanvas, primaryFont, 64, 11 + height_font(primaryFont), color->red, color->green, color->blue, textBuffer, 0);
     }else{
 
         obtainImageBuffer(pixelsOffscreenImage, offscreenImage->columns, offscreenImage->rows, buffer, matrixWidth, matrixHeight, HORIZONTAL_FLIP);
@@ -180,7 +180,7 @@ int initLedMatrix(int argc, char ** argv){
     ledCanvas = led_matrix_get_canvas(ledMatricies);
     offscreenCanvas = led_matrix_create_offscreen_canvas(ledMatricies);
 
-    primaryFont = load_font("./fonts/6x13B.bdf");
+    primaryFont = load_font("./fonts/6x13.bdf");
 
     ImageInfo imageInfo;
     GetImageInfo(&imageInfo);
@@ -196,6 +196,12 @@ int initLedMatrix(int argc, char ** argv){
 
     offscreenImage = AllocateImage(&imageInfo);
     pixelsOffscreenImage = GetImagePixels(offscreenImage, 0, 0, offscreenImage->columns, offscreenImage->rows);
+
+    textMode = 1;
+    updateColor();
+    strcpy(renderBuffer, "Starting..Starting..JadeProto JadeProto ");
+    renderToMatrix();
+    textMode = 0;
 
     return 0;
 }

@@ -6,7 +6,7 @@
 #include "wsled.h"
 
 ws2811_t ledStrip = {
-    .freq = WS2811_TARGET_FREQ ,
+    .freq = WS2811_TARGET_FREQ,
     .dmanum = 10,
     .channel = {
         [0] = {
@@ -14,7 +14,7 @@ ws2811_t ledStrip = {
             .invert = 0,
             .count = 48,
             .strip_type = WS2811_STRIP_GRB,
-            .brightness = 75
+            .brightness = 100
         }
     }
 };
